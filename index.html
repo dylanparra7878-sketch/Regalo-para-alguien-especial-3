@@ -1,272 +1,123 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ramo de Rosas Amarillas 🌻✨</title>
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background-color: #050505;
-      font-family: 'Arial', sans-serif;
-    }
-    #canvas-container {
-      width: 100vw;
-      height: 100vh;
-    }
-    .card-modal {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.95);
-      padding: 25px 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
-      text-align: center;
-      max-width: 85%;
-      display: none;
-      z-index: 10;
-      animation: fadeIn 0.5s ease;
-    }
-    .card-modal h2 {
-      color: #d4af37;
-      margin-top: 0;
-      font-size: 1.5rem;
-    }
-    .card-modal p {
-      color: #333;
-      font-size: 1.1rem;
-      line-height: 1.6;
-      font-weight: 500;
-    }
-    .close-btn {
-      background: #ffd700;
-      border: none;
-      padding: 10px 22px;
-      border-radius: 20px;
-      font-weight: bold;
-      color: #333;
-      cursor: pointer;
-      margin-top: 15px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translate(-50%, -45%); }
-      to { opacity: 1; transform: translate(-50%, -50%); }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flor Amarilla 3D 🌻</title>
+    <style>
+        /* Configuración del fondo y contenedor principal */
+        body {
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(to bottom, #1a1a2e, #16213e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            perspective: 1000px;
+            font-family: 'Arial', sans-serif;
+        }
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        h1 {
+            position: absolute;
+            top: 40px;
+            color: #ffde43;
+            text-shadow: 0 0 10px rgba(255, 222, 67, 0.5);
+            font-size: 2rem;
+            pointer-events: none;
+        }
+
+        /* Espacio tridimensional */
+        .escena_3d {
+            width: 400px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+        }
+
+        /* Contenedor de la flor que rota continuamente */
+        .flor {
+            position: relative;
+            width: 0;
+            height: 0;
+            transform-style: preserve-3d;
+            animation: rotarFlor 12s linear infinite;
+        }
+
+        @keyframes rotarFlor {
+            0% { transform: rotateY(0deg) rotateX(-15deg); }
+            100% { transform: rotateY(360deg) rotateX(-15deg); }
+        }
+
+        /* Centro de la flor (Pistilo) */
+        .centro {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #5c3a21, #362213);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) translateZ(10px);
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        /* Base geométrica de los pétalos */
+        .petalo {
+            position: absolute;
+            width: 25px;
+            height: 110px;
+            background: linear-gradient(to top, #ffcc00, #fffe7a);
+            border-radius: 50% 50% 20% 20%;
+            transform-origin: bottom center;
+            bottom: 0;
+            left: -12.5px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+        }
+
+        /* Tallo de la flor */
+        .tallo {
+            position: absolute;
+            width: 10px;
+            height: 250px;
+            background: linear-gradient(to right, #2d6a4f, #1b4332);
+            top: 0;
+            left: -5px;
+            transform: rotateX(90deg) translateZ(-125px);
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
 
-  <div id="canvas-container"></div>
+    <h1>Para Ti 🌻</h1>
 
-  <div id="card" class="card-modal">
-    <h2>Un detalle para ti 🌻✨</h2>
-    <p>espero q te guste mi amor quiero que recuerdes q te amo muchísimo y siempre quiero estar a tu lado;3</p>
-    <button class="close-btn" onclick="closeCard(event)">Cerrar</button>
-  </div>
+    <div class="escena_3d">
+        <div class="flor" id="contenedor-flor">
+            <!-- El tallo y centro fijos -->
+            <div class="tallo"></div>
+            <div class="centro"></div>
+        </div>
+    </div>
 
-  <script>
-    let scene, camera, renderer, particles, bouquetGroup;
+    <script>
+        const flor = document.getElementById('contenedor-flor');
+        const totalPetalos = 18; // Cantidad de pétalos alrededor de la flor
 
-    // Generar una rosa compacta estilo capullo
-    function createRose() {
-      const rose = new THREE.Group();
-      
-      const petalMat = new THREE.MeshBasicMaterial({ color: 0xffd700, side: THREE.DoubleSide });
-      const innerPetalMat = new THREE.MeshBasicMaterial({ color: 0xffae00, side: THREE.DoubleSide });
+        for (let i = 0; i < totalPetalos; i++) {
+            const petalo = document.createElement('div');
+            petalo.classList.add('petalo');
+            
+            // Calculamos el ángulo en el espacio para cada pétalo
+            const anguloZ = (360 / totalPetalos) * i;
+            
+            // Inclinamos ligeramente hacia el frente (X) para darle profundidad de copa 3D
+            const inclinacionX = 20; 
 
-      // Capas de pétalos envueltos
-      const layers = 5;
-      for (let l = 0; l < layers; l++) {
-        const petalsInLayer = 4 + l * 2;
-        const radius = 0.08 + l * 0.07;
-        const scaleY = 1 + l * 0.15;
-
-        for (let i = 0; i < petalsInLayer; i++) {
-          const angle = (i / petalsInLayer) * Math.PI * 2 + (l * 0.5);
-          const petalGeo = new THREE.SphereGeometry(radius, 8, 8, 0, Math.PI * 1.2, 0, Math.PI * 0.8);
-          const mat = l < 2 ? innerPetalMat : petalMat;
-          const petal = new THREE.Mesh(petalGeo, mat);
-
-          petal.position.x = Math.cos(angle) * (radius * 0.5);
-          petal.position.z = Math.sin(angle) * (radius * 0.5);
-          petal.position.y = l * 0.03;
-
-          petal.rotation.y = angle + Math.PI / 2;
-          petal.rotation.x = 0.2 + l * 0.1;
-
-          rose.add(petal);
+            petalo.style.transform = `rotateZ(${anguloZ}deg) rotateX(${inclinacionX}deg)`;
+            
+            flor.appendChild(petalo);
         }
-      }
-
-      // Centro de la rosa
-      const centerGeo = new THREE.SphereGeometry(0.1, 12, 12);
-      const centerMat = new THREE.MeshBasicMaterial({ color: 0xe69900 });
-      const center = new THREE.Mesh(centerGeo, centerMat);
-      center.position.y = 0.1;
-      rose.add(center);
-
-      return rose;
-    }
-
-    // Hoja verde
-    function createLeaf() {
-      const leafGeo = new THREE.ConeGeometry(0.3, 0.9, 3);
-      const leafMat = new THREE.MeshBasicMaterial({ color: 0x1e5631, side: THREE.DoubleSide });
-      const leaf = new THREE.Mesh(leafGeo, leafMat);
-      leaf.scale.set(1, 0.1, 1.5);
-      return leaf;
-    }
-
-    function init() {
-      const container = document.getElementById('canvas-container');
-
-      scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 14;
-
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
-      container.appendChild(renderer.domElement);
-
-      // Partículas doradas de fondo
-      const particleCount = 2000;
-      const geometry = new THREE.BufferGeometry();
-      const positions = new Float32Array(particleCount * 3);
-      const colors = new Float32Array(particleCount * 3);
-
-      const color1 = new THREE.Color(0xffe066);
-      const color2 = new THREE.Color(0xffffff);
-
-      for (let i = 0; i < particleCount * 3; i += 3) {
-        positions[i] = (Math.random() - 0.5) * 35;
-        positions[i + 1] = (Math.random() - 0.5) * 35;
-        positions[i + 2] = (Math.random() - 0.5) * 35;
-
-        const mixedColor = Math.random() > 0.3 ? color1 : color2;
-        colors[i] = mixedColor.r;
-        colors[i + 1] = mixedColor.g;
-        colors[i + 2] = mixedColor.b;
-      }
-
-      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-      const material = new THREE.PointsMaterial({
-        size: 0.11,
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.75
-      });
-
-      particles = new THREE.Points(geometry, material);
-      scene.add(particles);
-
-      // Construcción del Ramo Gran Domo
-      bouquetGroup = new THREE.Group();
-
-      const totalRoses = 55; // Densidad alta estilo ramo gigante
-      const domeRadius = 2.2;
-
-      for (let i = 0; i < totalRoses; i++) {
-        const rose = createRose();
-        
-        // Distribución esférica en la parte superior (domo)
-        const phi = Math.acos(1 - (i / totalRoses) * 0.85); 
-        const theta = Math.sqrt(totalRoses * Math.PI) * phi;
-
-        const x = domeRadius * Math.sin(phi) * Math.cos(theta);
-        const y = domeRadius * Math.cos(phi) + 0.3;
-        const z = domeRadius * Math.sin(phi) * Math.sin(theta);
-
-        rose.position.set(x, y, z);
-
-        // Orientar la rosa hacia afuera del domo
-        rose.lookAt(x * 2, y * 2 + 0.5, z * 2);
-
-        bouquetGroup.add(rose);
-      }
-
-      // Añadir follaje (hojas verdes bajo el domo)
-      const leafCount = 18;
-      for (let i = 0; i < leafCount; i++) {
-        const leaf = createLeaf();
-        const angle = (i / leafCount) * Math.PI * 2;
-        leaf.position.x = Math.cos(angle) * 2.1;
-        leaf.position.z = Math.sin(angle) * 2.1;
-        leaf.position.y = 0.2;
-        leaf.rotation.y = angle;
-        leaf.rotation.x = 0.5;
-        bouquetGroup.add(leaf);
-      }
-
-      // Tallos agrupados abajo
-      const stemCount = 12;
-      const stemMat = new THREE.MeshBasicMaterial({ color: 0x2d5a27 });
-      for (let i = 0; i < stemCount; i++) {
-        const stemGeo = new THREE.CylinderGeometry(0.04, 0.03, 3, 8);
-        const stem = new THREE.Mesh(stemGeo, stemMat);
-        const angle = (i / stemCount) * Math.PI * 2;
-        stem.position.x = Math.cos(angle) * 0.3;
-        stem.position.z = Math.sin(angle) * 0.3;
-        stem.position.y = -1.6;
-        stem.rotation.z = (Math.random() - 0.5) * 0.15;
-        bouquetGroup.add(stem);
-      }
-
-      // Cintas atadas
-      const ribbonGeo = new THREE.TorusGeometry(0.4, 0.08, 8, 24);
-      const ribbonMat = new THREE.MeshBasicMaterial({ color: 0xffcc00 });
-      const ribbon = new THREE.Mesh(ribbonGeo, ribbonMat);
-      ribbon.rotation.x = Math.PI / 2;
-      ribbon.position.y = -0.5;
-      bouquetGroup.add(ribbon);
-
-      bouquetGroup.position.y = -0.3;
-      scene.add(bouquetGroup);
-
-      window.addEventListener('resize', onWindowResize);
-      window.addEventListener('click', showCard);
-      window.addEventListener('touchstart', showCard);
-
-      animate();
-    }
-
-    function animate() {
-      requestAnimationFrame(animate);
-
-      particles.rotation.y += 0.0012;
-      particles.rotation.x += 0.0004;
-
-      if (bouquetGroup) {
-        bouquetGroup.rotation.y += 0.008;
-      }
-
-      renderer.render(scene, camera);
-    }
-
-    function onWindowResize() {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    }
-
-    function showCard() {
-      document.getElementById('card').style.display = 'block';
-    }
-
-    function closeCard(event) {
-      event.stopPropagation();
-      document.getElementById('card').style.display = 'none';
-    }
-
-    init();
-  </script>
+    </script>
 </body>
 </html>
