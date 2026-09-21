@@ -3,128 +3,215 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Para Mi Princesa 🌻✨</title>
+  <title>Girasol en el Espacio 🌻✨</title>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-
     body {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
+      overflow: hidden;
+      background-color: #030308;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow: hidden;
-      color: #fff;
     }
-
-    /* Fondo de estrellas flotantes */
-    .bg-particles {
+    #canvas-container {
+      width: 100vw;
+      height: 100vh;
+    }
+    .card-modal {
       position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      overflow: hidden;
-      z-index: 1;
-    }
-
-    .particle {
-      position: absolute;
-      border-radius: 50%;
-      background: rgba(255, 223, 0, 0.7);
-      box-shadow: 0 0 10px rgba(255, 223, 0, 0.8);
-      animation: float 6s infinite ease-in-out;
-    }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0) scale(0.8); opacity: 0.3; }
-      50% { transform: translateY(-30px) scale(1.2); opacity: 1; }
-    }
-
-    /* Tarjeta Elegante */
-    .card {
-      position: relative;
-      z-index: 2;
-      background: rgba(255, 255, 255, 0.07);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(255, 215, 0, 0.3);
-      padding: 40px 30px;
-      border-radius: 24px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 215, 0, 0.4);
+      padding: 30px 40px;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(255, 215, 0, 0.2);
       text-align: center;
-      max-width: 420px;
-      width: 90%;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5),
-                  0 0 30px rgba(255, 215, 0, 0.15);
-      animation: fadeIn 1.5s ease-out;
+      display: none;
+      z-index: 10;
+      animation: popIn 0.4s ease-out;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
-    /* Girasol animado */
-    .sunflower {
-      font-size: 70px;
-      display: inline-block;
-      animation: pulse 3s infinite ease-in-out;
-      margin-bottom: 15px;
-      filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1) rotate(0deg); }
-      50% { transform: scale(1.1) rotate(5deg); }
-    }
-
-    h1 {
-      font-size: 1.8rem;
+    .card-modal h2 {
       color: #ffd700;
+      font-size: 2.2rem;
       margin-bottom: 15px;
-      font-weight: 600;
-      letter-spacing: 1px;
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
     }
-
-    p {
-      font-size: 1.25rem;
-      line-height: 1.6;
-      color: #f0f0f0;
-      font-style: italic;
-      font-weight: 300;
+    .close-btn {
+      background: #ffd700;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 15px;
+      font-weight: bold;
+      color: #111;
+      cursor: pointer;
+      margin-top: 10px;
     }
-
-    .sparkles {
-      margin-top: 20px;
-      font-size: 1.2rem;
-      letter-spacing: 4px;
+    @keyframes popIn {
+      from { opacity: 0; transform: translate(-50%, -40%) scale(0.8); }
+      to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
-  <!-- Partículas de fondo -->
-  <div class="bg-particles">
-    <div class="particle" style="width: 6px; height: 6px; top: 20%; left: 15%; animation-delay: 0s;"></div>
-    <div class="particle" style="width: 8px; height: 8px; top: 60%; left: 80%; animation-delay: 1s;"></div>
-    <div class="particle" style="width: 5px; height: 5px; top: 75%; left: 25%; animation-delay: 2s;"></div>
-    <div class="particle" style="width: 7px; height: 7px; top: 30%; left: 70%; animation-delay: 1.5s;"></div>
-    <div class="particle" style="width: 9px; height: 9px; top: 85%; left: 60%; animation-delay: 2.5s;"></div>
+  <div id="canvas-container"></div>
+
+  <div id="card" class="card-modal">
+    <h2>te amo</h2>
+    <button class="close-btn" onclick="closeCard(event)">✨</button>
   </div>
 
-  <!-- Contenido Principal -->
-  <div class="card">
-    <div class="sunflower">🌻</div>
-    <h1>Para Ti ✨</h1>
-    <p>te amo mi princesa espero que te guste</p>
-    <div class="sparkles">💖✨💖</div>
-  </div>
+  <script>
+    let scene, camera, renderer, particles, sunflowerGroup;
 
+    function createSunflower() {
+      const group = new THREE.Group();
+
+      // Centro del girasol
+      const centerGeo = new THREE.CylinderGeometry(1.2, 1.2, 0.3, 32);
+      const centerMat = new THREE.MeshBasicMaterial({ color: 0x4a2e00 });
+      const center = new THREE.Mesh(centerGeo, centerMat);
+      center.rotation.x = Math.PI / 2;
+      group.add(center);
+
+      // Pétalos amarillos
+      const petalCount = 20;
+      const petalMat = new THREE.MeshBasicMaterial({ color: 0xffd700, side: THREE.DoubleSide });
+
+      for (let i = 0; i < petalCount; i++) {
+        const angle = (i / petalCount) * Math.PI * 2;
+        const petalGeo = new THREE.ConeGeometry(0.35, 1.8, 12);
+        const petal = new THREE.Mesh(petalGeo, petalMat);
+
+        petal.position.x = Math.cos(angle) * 1.8;
+        petal.position.y = Math.sin(angle) * 1.8;
+        petal.position.z = 0;
+
+        petal.rotation.z = angle - Math.PI / 2;
+        group.add(petal);
+      }
+
+      // Capa interna de pétalos pequeños
+      for (let i = 0; i < petalCount; i++) {
+        const angle = (i / petalCount) * Math.PI * 2 + (Math.PI / petalCount);
+        const petalGeo = new THREE.ConeGeometry(0.3, 1.4, 12);
+        const petal = new THREE.Mesh(petalGeo, petalMat);
+
+        petal.position.x = Math.cos(angle) * 1.4;
+        petal.position.y = Math.sin(angle) * 1.4;
+        petal.position.z = 0.05;
+
+        petal.rotation.z = angle - Math.PI / 2;
+        group.add(petal);
+      }
+
+      // Tallo
+      const stemGeo = new THREE.CylinderGeometry(0.12, 0.12, 4, 16);
+      const stemMat = new THREE.MeshBasicMaterial({ color: 0x2e8b57 });
+      const stem = new THREE.Mesh(stemGeo, stemMat);
+      stem.position.y = -2.2;
+      group.add(stem);
+
+      // Hoja
+      const leafGeo = new THREE.ConeGeometry(0.4, 1.2, 4);
+      const leafMat = new THREE.MeshBasicMaterial({ color: 0x228b22, side: THREE.DoubleSide });
+      const leaf = new THREE.Mesh(leafGeo, leafMat);
+      leaf.scale.set(1, 0.1, 1.5);
+      leaf.position.set(0.6, -2, 0);
+      leaf.rotation.z = -Math.PI / 3;
+      group.add(leaf);
+
+      return group;
+    }
+
+    function init() {
+      const container = document.getElementById('canvas-container');
+
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 8;
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+
+      // Partículas espaciales
+      const particleCount = 1500;
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+
+      for (let i = 0; i < particleCount * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 30;
+        positions[i + 1] = (Math.random() - 0.5) * 30;
+        positions[i + 2] = (Math.random() - 0.5) * 30;
+      }
+
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+      const material = new THREE.PointsMaterial({
+        size: 0.08,
+        color: 0xffd700,
+        transparent: true,
+        opacity: 0.8
+      });
+
+      particles = new THREE.Points(geometry, material);
+      scene.add(particles);
+
+      // Girasol 3D
+      sunflowerGroup = createSunflower();
+      scene.add(sunflowerGroup);
+
+      window.addEventListener('resize', onWindowResize);
+      window.addEventListener('click', showCard);
+      window.addEventListener('touchstart', showCard);
+
+      animate();
+    }
+
+    let clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const elapsedTime = clock.getElapsedTime();
+
+      // Animación de flotación suave y rotación
+      if (sunflowerGroup) {
+        sunflowerGroup.rotation.y = Math.sin(elapsedTime * 0.5) * 0.4;
+        sunflowerGroup.rotation.x = Math.cos(elapsedTime * 0.3) * 0.2;
+        sunflowerGroup.position.y = Math.sin(elapsedTime * 1.2) * 0.3;
+      }
+
+      particles.rotation.y += 0.0008;
+
+      renderer.render(scene, camera);
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function showCard() {
+      document.getElementById('card').style.display = 'block';
+    }
+
+    function closeCard(event) {
+      event.stopPropagation();
+      document.getElementById('card').style.display = 'none';
+    }
+
+    init();
+  </script>
 </body>
 </html>
