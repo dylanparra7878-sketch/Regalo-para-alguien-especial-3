@@ -23,7 +23,7 @@
       background: rgba(255, 255, 255, 0.95);
       padding: 25px 30px;
       border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+      box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
       text-align: center;
       max-width: 80%;
       display: none;
@@ -33,21 +33,24 @@
     .card-modal h2 {
       color: #d4af37;
       margin-top: 0;
+      font-size: 1.5rem;
     }
     .card-modal p {
       color: #333;
       font-size: 1.1rem;
-      line-height: 1.5;
+      line-height: 1.6;
+      font-weight: 500;
     }
     .close-btn {
       background: #ffd700;
       border: none;
-      padding: 8px 18px;
+      padding: 10px 22px;
       border-radius: 20px;
       font-weight: bold;
       color: #333;
       cursor: pointer;
       margin-top: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     @keyframes fadeIn {
       from { opacity: 0; transform: translate(-50%, -45%); }
@@ -62,13 +65,46 @@
   <div id="canvas-container"></div>
 
   <div id="card" class="card-modal">
-    <h2>Para el amor de mi vida ❤️🌻</h2>
-    <p>Estas flores amarillas representan lo brillante y especial que eres para mí.<br>¡Te amo muchísimo!</p>
-    <button class="close-btn" onclick="closeCard()">Cerrar</button>
+    <h2>Un detalle para ti 🌻✨</h2>
+    <p>espero q te guste mi amor quiero que recuerdes q te amo muchísimo y siempre quiero estar a tu lado;3</p>
+    <button class="close-btn" onclick="closeCard(event)">Cerrar</button>
   </div>
 
   <script>
-    let scene, camera, renderer, particles, heartMesh;
+    let scene, camera, renderer, particles, bouquetGroup;
+
+    function createFlower() {
+      const flower = new THREE.Group();
+
+      // Centro de la flor
+      const centerGeo = new THREE.SphereGeometry(0.3, 16, 16);
+      const centerMat = new THREE.MeshBasicMaterial({ color: 0x8b5a2b });
+      const center = new THREE.Mesh(centerGeo, centerMat);
+      flower.add(center);
+
+      // Pétalos amarillos
+      const petalCount = 8;
+      const petalGeo = new THREE.ConeGeometry(0.2, 0.9, 12);
+      const petalMat = new THREE.MeshBasicMaterial({ color: 0xffd700, wireframe: false });
+
+      for (let i = 0; i < petalCount; i++) {
+        const angle = (i / petalCount) * Math.PI * 2;
+        const petal = new THREE.Mesh(petalGeo, petalMat);
+        petal.position.x = Math.cos(angle) * 0.45;
+        petal.position.y = Math.sin(angle) * 0.45;
+        petal.rotation.z = angle - Math.PI / 2;
+        flower.add(petal);
+      }
+
+      // Tallo verde
+      const stemGeo = new THREE.CylinderGeometry(0.04, 0.04, 2.5, 8);
+      const stemMat = new THREE.MeshBasicMaterial({ color: 0x2e8b57 });
+      const stem = new THREE.Mesh(stemGeo, stemMat);
+      stem.position.y = -1.25;
+      flower.add(stem);
+
+      return flower;
+    }
 
     function init() {
       const container = document.getElementById('canvas-container');
@@ -82,7 +118,8 @@
       renderer.setPixelRatio(window.devicePixelRatio);
       container.appendChild(renderer.domElement);
 
-      const particleCount = 1500;
+      // Partículas de la galaxia
+      const particleCount = 1800;
       const geometry = new THREE.BufferGeometry();
       const positions = new Float32Array(particleCount * 3);
       const colors = new Float32Array(particleCount * 3);
@@ -114,22 +151,28 @@
       particles = new THREE.Points(geometry, material);
       scene.add(particles);
 
-      const heartShape = new THREE.Shape();
-      heartShape.moveTo(0, 0);
-      heartShape.bezierCurveTo(0, 0.5, -0.5, 1, -1, 1);
-      heartShape.bezierCurveTo(-1.7, 1, -1.7, 0, -1.7, 0);
-      heartShape.bezierCurveTo(-1.7, -0.7, -0.7, -1.4, 0, -2);
-      heartShape.bezierCurveTo(0.7, -1.4, 1.7, -0.7, 1.7, 0);
-      heartShape.bezierCurveTo(1.7, 0, 1.7, 1, 1, 1);
-      heartShape.bezierCurveTo(0.5, 1, 0, 0.5, 0, 0);
+      // Crear Ramo de Flores
+      bouquetGroup = new THREE.Group();
+      const flowerCount = 12;
 
-      const extrudeSettings = { depth: 0.4, bevelEnabled: true, bevelSegments: 3, steps: 2, bevelSize: 0.1, bevelThickness: 0.1 };
-      const heartGeo = new THREE.ExtrudeGeometry(heartShape, extrudeSettings);
-      const heartMat = new THREE.MeshBasicMaterial({ color: 0xffd700, wireframe: true });
-      heartMesh = new THREE.Mesh(heartGeo, heartMat);
-      heartMesh.scale.set(1.5, 1.5, 1.5);
-      heartMesh.position.y = 1;
-      scene.add(heartMesh);
+      for (let i = 0; i < flowerCount; i++) {
+        const fl = createFlower();
+        const angle = (i / flowerCount) * Math.PI * 2;
+        fl.position.x = Math.cos(angle) * 1.2;
+        fl.position.z = Math.sin(angle) * 1.2;
+        fl.position.y = (Math.random() - 0.5) * 0.8;
+        fl.rotation.z = (Math.random() - 0.5) * 0.4;
+        bouquetGroup.add(fl);
+      }
+
+      // Flor central más alta
+      const centerFl = createFlower();
+      centerFl.position.set(0, 0.5, 0);
+      centerFl.scale.set(1.2, 1.2, 1.2);
+      bouquetGroup.add(centerFl);
+
+      bouquetGroup.position.y = 0.5;
+      scene.add(bouquetGroup);
 
       window.addEventListener('resize', onWindowResize);
       window.addEventListener('click', showCard);
@@ -144,8 +187,8 @@
       particles.rotation.y += 0.0015;
       particles.rotation.x += 0.0005;
 
-      if (heartMesh) {
-        heartMesh.rotation.y += 0.01;
+      if (bouquetGroup) {
+        bouquetGroup.rotation.y += 0.01;
       }
 
       renderer.render(scene, camera);
@@ -161,7 +204,7 @@
       document.getElementById('card').style.display = 'block';
     }
 
-    function closeCard() {
+    function closeCard(event) {
       event.stopPropagation();
       document.getElementById('card').style.display = 'none';
     }
@@ -169,5 +212,4 @@
     init();
   </script>
 </body>
-  </html>
-  
+</html>
